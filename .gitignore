@@ -1,5 +1,9 @@
 .idea/
 
+
+app/src/main/assets/README.md
+app/src/main/assets/CHANGELOG.md
+
 # Created by https://www.gitignore.io/api/and,android,jetbrains,windows,osx
 
 #!! ERROR: and is undefined. Use list command to see defined gitignore types !!#

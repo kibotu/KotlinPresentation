@@ -18,6 +18,7 @@ import com.common.android.utils.ContextHelper;
 import com.common.android.utils.interfaces.Backpress;
 import com.common.android.utils.interfaces.DispatchTouchEvent;
 import com.common.android.utils.interfaces.LogTag;
+import com.common.android.utils.misc.UIDGenerator;
 
 import net.kibotu.base.R;
 
@@ -40,6 +41,8 @@ public abstract class BaseFragment extends Fragment implements LogTag, DispatchT
      * <a href="http://stackoverflow.com/a/15314508">Restoring instance state after fragment transactions.</a>
      */
     private Bundle savedState = null;
+
+    protected final int uid = UIDGenerator.newUID();
 
     public BaseFragment() {
     }
@@ -151,7 +154,7 @@ public abstract class BaseFragment extends Fragment implements LogTag, DispatchT
     @NonNull
     @Override
     public String tag() {
-        return getClass().getSimpleName();
+        return getClass().getSimpleName() + "[" + uid + "]";
     }
 
     public BaseFragment setArgument(Bundle bundle) {
@@ -159,23 +162,26 @@ public abstract class BaseFragment extends Fragment implements LogTag, DispatchT
         return this;
     }
 
-    @Override
-    public void onBackStackChanged() {
-        final Fragment fragment = currentFragment();
-        if (fragment instanceof BaseFragment)
-            if (((BaseFragment) fragment).tag().equals(tag()))
-                onnBackStackChangedToThis();
-    }
-
     /**
      * Returned to this fragment after BackStack changes.
      */
-    protected void onnBackStackChangedToThis() {
+    protected void onActiveAfterBackStackChanged() {
         colorizeStatusBar();
     }
 
     protected void colorizeStatusBar() {
         changeStatusBarColorRes(onEnterStatusBarColor());
+    }
+
+    protected boolean isCurrentFragment() {
+        final Fragment fragment = currentFragment();
+        return fragment instanceof BaseFragment && ((BaseFragment) fragment).tag().equals(tag());
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        if (isCurrentFragment())
+            onActiveAfterBackStackChanged();
     }
 
 }

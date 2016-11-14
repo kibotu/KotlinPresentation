@@ -13,6 +13,7 @@ import android.view.WindowManager;
 
 import com.common.android.utils.interfaces.LayoutProvider;
 import com.common.android.utils.interfaces.LogTag;
+import com.common.android.utils.misc.UIDGenerator;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -31,6 +32,8 @@ import static com.common.android.utils.ContextHelper.getFragmentActivity;
 public abstract class BaseDialogFragment extends DialogFragment implements LayoutProvider, LogTag {
 
     private Unbinder unbinder;
+
+    protected final int uid = UIDGenerator.newUID();
 
     @NonNull
     @Override
@@ -72,16 +75,17 @@ public abstract class BaseDialogFragment extends DialogFragment implements Layou
         unbinder.unbind();
     }
 
-    @NonNull
-    public String tag() {
-        return getClass().getSimpleName();
-    }
-
     public BaseDialogFragment show() {
         if (getFragmentActivity().getSupportFragmentManager().findFragmentByTag(getClass().getCanonicalName()) != null)
             return this;
 
         show(getFragmentActivity().getSupportFragmentManager(), getClass().getCanonicalName());
         return this;
+    }
+
+    @NonNull
+    @Override
+    public String tag() {
+        return getClass().getSimpleName() + "[" + uid + "]";
     }
 }

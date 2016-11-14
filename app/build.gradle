@@ -1,29 +1,644 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'android-apt'
+apply plugin: 'android-rocket-launcher'
+apply plugin: 'com.getkeepsafe.dexcount'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'de.felixschulze.gradle.hockeyapp'
+apply plugin: 'io.fabric'
+
+ext {
+    versionName = '1.0'
+    VSC = 'https://github.com/kibotu/AndroidBase/'
+}
 
 android {
+
     compileSdkVersion 25
     buildToolsVersion "25.0.0"
+
     defaultConfig {
         applicationId "net.kibotu.base"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionCode commitCount()
+        versionName simpleReleaseVersionName()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+
+        buildConfigField "String", "SIMPLE_VERSION_NAME", escape(simpleReleaseVersionName())
+        buildConfigField "String", "CANONICAL_VERSION_NAME", escape(canonicalReleaseVersionName())
+        buildConfigField "String", "COMMIT_HASH", escape(commitHash())
+        buildConfigField "String", "BRANCH", escape(branchNameByGit())
+        buildConfigField "String", "BUILD_DATE", escape(new Date().getTime())
+        buildConfigField "String", "VSC", escape(VSC)
     }
+
+    // region sign configs
+
+    signingConfigs {
+        try {
+            debug {
+                storeFile file('../debug.jks')
+                storePassword DEBUG_STORE_PASSWORD
+                keyAlias DEBUG_KEYSTORE_ALLIAS
+                keyPassword DEBUG_KEY_PASSWORD
+            }
+        }
+        catch (final ignored) {
+            throw new InvalidUserDataException('You should define DEBUG_KEYSTORE_ALLIAS, DEBUG_STORE_PASSWORD, DEBUG_KEY_PASSWORD in gradle.properties.')
+        }
+        try {
+            release {
+                storeFile file('../release.jks')
+                storePassword RELEASE_STORE_PASSWORD
+                keyAlias RELEASE_KEYSTORE_ALIAS
+                keyPassword RELEASE_KEY_PASSWORD
+            }
+        } catch (final ignored) {
+            throw new InvalidUserDataException('You should define RELEASE_KEYSTORE_ALIAS, RELEASE_STORE_PASSWORD, RELEASE_KEY_PASSWORD in gradle.properties.')
+        }
+    }
+
+    // endregion
+
+    // region build types
+
     buildTypes {
-        release {
+        debug {
+            applicationIdSuffix ".debug"
+            signingConfig signingConfigs.debug
+            pseudoLocalesEnabled false
+            debuggable true
             minifyEnabled false
+            shrinkResources false
+            zipAlignEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+            initWith(buildTypes.debug)
+            applicationIdSuffix ""
+            signingConfig signingConfigs.release
+            debuggable false
+            minifyEnabled false
+            shrinkResources false
+            zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    // endregion
+
+    // region dex options
+
+    dexOptions {
+        preDexLibraries = false
+        jumboMode = false
+        javaMaxHeapSize '4g'
+        maxProcessCount 4
+    }
+
+    // endregion
+
+    // region compile options
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    // endregion
+
+    // region lint options
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+        ignoreWarnings true
+        disable 'InvalidPackage'
+    }
+
+    // endregion
+
+    // region test options
+
+    testOptions {
+        unitTests.all {
+            jvmArgs '-noverify'
+        }
+        unitTests.returnDefaultValues = true
+    }
+
+    // endregion
+
+    // region adb options
+
+    adbOptions {
+        timeOutInMs 60000 // set timeout to 1 minute
+    }
+
+    // endregion
+
+    // region exclude duplicated meta inf files
+
+    packagingOptions {
+        exclude 'META-INF/maven/com.google.guava/guava/pom.properties'
+        exclude 'META-INF/maven/com.google.guava/guava/pom.xml'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/services/javax.annotation.processing.Processor'  // butterknife
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+    }
+
+    // endregion
+
+    // region kotlin
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    kapt {
+        generateStubs = true
+    }
+
+    // endregion
 }
+
+// region dependencies
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // kotlin
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    // multidex
+    compile 'com.android.support:multidex:1.0.1'
+
+    // appcompat
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:cardview-v7:25.0.0'
+
+    // common ui
+    compile 'com.github.kibotu:common.android.utils:0.7.2'
+
+    // device infos
+    compile 'com.github.kibotu:net.kibotu.android.deviceinfo:1.2.1'
+
+    // presenter
+    compile('com.github.kibotu:RecyclerViewPresenter:1.4.1') {
+        exclude group: 'com.android.support'
+    }
+
+    // force store
+    compile 'com.github.kibotu:GooglePlayForceUpdate:1.0.8'
+
+    // time bomb
+    compile 'com.github.kibotu:TimeBomb:1.1.0'
+
+    // ga
+    compile('com.github.kibotu:BloodHound:1.0.5') {
+        exclude group: 'com.google.android.gms'
+    }
+
+    // network connection handling
+    compile 'com.zplesac:connectionbuddy:1.2.0@aar'
+
+    // fonts
+    compile('uk.co.chrisjenx:calligraphy:2.2.0')
+
+    // view binding
+    compile 'com.jakewharton:butterknife:8.4.0'
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'
+
+    // permissions
+    compile 'com.github.hotchemi:permissionsdispatcher:2.1.3'
+    apt 'com.github.hotchemi:permissionsdispatcher-processor:2.1.3'
+
+    // parcel
+    compile 'org.parceler:parceler-api:1.1.2'
+    apt 'org.parceler:parceler:1.1.2'
+
+    // time
+    compile 'net.danlew:android.joda:2.9.4.2'
+
+    // share
+    compile 'com.github.kibotu:ShareIntentBuilder:v0.0.3'
+
+    // location for wifi scanning D:
+    compile 'io.nlopez.smartlocation:library:3.2.7'
+
+    // unit tests
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.robolectric:robolectric:3.2-SNAPSHOT'
+    testCompile 'org.robolectric:shadows-multidex:3.2-SNAPSHOT'
+    testCompile 'org.robolectric:robolectric-resources:3.2-SNAPSHOT'
+    testCompile 'org.robolectric:robolectric-utils:3.2-SNAPSHOT'
+    testCompile 'org.robolectric:robolectric-annotations:3.2-SNAPSHOT'
+    testCompile 'org.robolectric:robolectric-resources:3.2-SNAPSHOT'
+    testCompile 'org.robolectric:shadows-core:3.2-SNAPSHOT'
+    testCompile 'org.khronos:opengl-api:gl1.1-android-2.1_r1'
+
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.0.0'
-    testCompile 'junit:junit:4.12'
+
+    // debug menu
+    compile('com.mikepenz:materialdrawer:5.2.6@aar') {
+        transitive = true
+    }
+
+    // markdown
+    compile 'com.mukesh:markdownview:1.0.0'
+    compile 'com.yydcdut:rxmarkdown:0.0.5'
+
+    // stetho
+    compile 'com.facebook.stetho:stetho:1.3.1'
+    compile 'com.facebook.stetho:stetho-okhttp3:1.3.1'
+    compile 'com.facebook.stetho:stetho-js-rhino:1.3.1'
+
+    // crashlytics
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
+        transitive = true;
+    }
+
+    // restarting app
+    compile 'com.jakewharton:process-phoenix:1.1.0'
 }
+
+// endregion
+
+// region override support library version
+
+configurations.all {
+    resolutionStrategy.force 'com.android.support:support-annotations:25.0.0'
+    resolutionStrategy.force 'com.android.support:support-v4:25.0.0'
+    resolutionStrategy.force 'com.android.support:support-v13:25.0.0'
+    resolutionStrategy.force 'com.android.support:appcompat-v7:25.0.0'
+    resolutionStrategy.force 'com.android.support:design:25.0.0'
+    resolutionStrategy.force 'com.android.support:recyclerview-v7:25.0.0'
+    resolutionStrategy.force 'com.android.support:cardview-v7:25.0.0'
+
+    resolutionStrategy.force 'com.jakewharton:butterknife:8.4.0'
+    resolutionStrategy.force 'com.jakewharton:butterknife-compiler:8.4.0'
+
+    resolutionStrategy.force 'com.google.android.gms:play-services-location:9.8.0'
+    resolutionStrategy.force 'com.google.android.gms:play-services-analytics:9.8.0'
+}
+
+// endregion
+
+// region retrolambda
+
+retrolambda {
+    jvmArgs '-noverify'
+    defaultMethods false
+    incremental true
+}
+
+// endregion
+
+// region dexcount
+
+dexcount {
+    format = 'list'
+    includeClasses = false
+    includeFieldCount = true
+    includeTotalMethodCount = false
+    orderByMethodCount = false
+    verbose = false
+    maxTreeDepth = Integer.MAX_VALUE
+    teamCityIntegration = false
+    enableForInstantRun = false
+    teamCitySlug = null
+}
+
+// endregion
+
+// region hockey app
+
+hockeyapp {
+    apiToken = ''
+    releaseType = 2 // alpha
+    notify = 0
+    status = 2
+    notesType = 1
+
+    if (!new File('../RELEASE.md').exists())
+        generateReleaseNotes()
+
+    notes = new File(file('../RELEASE.md').absolutePath).getText('UTF-8')
+
+    keep = 15
+    sort = 'date'
+    variantToApplicationId = [
+            debug  : '',
+            release: ''
+    ]
+}
+
+// endregion
+
+// region release notes
+
+//noinspection GroovyAssignabilityCheck
+def generateReleaseNotes() {
+    final String filePath = "${project.rootDir}/RELEASE.md"
+
+    description = "Generate release notes. [" + filePath + "]"
+    println(description)
+
+    final def env = System.getenv()
+    env.each { final key, final value -> println "$key = $value"; }
+
+    final def output = new File(filePath)
+
+    def notes = 'Internal Release.'
+
+    output.write(notes)
+
+    println new File(filePath).getText('UTF-8')
+}
+
+// endregion
+
+// region changelog
+
+//noinspection GroovyAssignabilityCheck
+def generateChangelog() {
+    final String filePath = "${project.rootDir}/app/src/main/assets/CHANGELOG.md"
+
+    description = "Generate Changelog. [" + filePath + "]"
+    println(description)
+
+    def log = gitLog()
+
+    StringBuilder builder = new StringBuilder();
+
+    Scanner scanner = new Scanner(log);
+    while (scanner.hasNextLine()) {
+        def line = scanner.nextLine()
+        def commit = line.subSequence(1, line.length() - 1)
+        // 0e9c204 message
+        def hash = commit.subSequence(0, 7)
+        def message = commit.subSequence(8, commit.length())
+        builder.append("<a href=\"").append(VSC).append("commits/").append(hash).append("\">#").append(hash).append("</a> ")
+                .append(message).append("\r\n")
+                .append("\r\n")
+    }
+
+    final def output = new File(filePath)
+    output.write(builder.toString())
+
+    println new File(filePath).getText('UTF-8')
+}
+
+// endregion
+
+// region settings
+
+// https://github.com/android/platform_packages_apps_settings/blob/master/AndroidManifest.xml
+//noinspection GroovyAssignabilityCheck
+task settings() << {
+    description = 'adb shell am start -a android.settings.SETTINGS'
+    println(description)
+    final def stdout = new ByteArrayOutputStream()
+    exec {
+        executable android.getAdbExe().toString()
+        args = ['shell', 'am', 'start', '-a', 'android.settings.SETTINGS']
+        standardOutput = stdout;
+    }
+    final def result = stdout.toString().trim();
+
+    println(result)
+}
+
+//noinspection GroovyAssignabilityCheck
+task devSettings() << {
+    description = 'adb shell am start -n com.android.settings/.DevelopmentSettings'
+    println(description)
+    final def stdout = new ByteArrayOutputStream()
+    exec {
+        executable android.getAdbExe().toString()
+        args = ['shell', 'am', 'start', '-n', 'com.android.settings/.DevelopmentSettings']
+        standardOutput = stdout;
+    }
+    final def result = stdout.toString().trim();
+    println(result)
+}
+
+// endregion
+
+// region versioning
+
+//noinspection GroovyAssignabilityCheck
+task printCommitCount() << {
+    commitCount()
+}
+
+//noinspection GroovyAssignabilityCheck
+task printBranchname() << {
+    branchName()
+}
+
+//noinspection GroovyAssignabilityCheck
+task printGitLog() << {
+    gitLog()
+}
+
+def gitLog() {
+    description = "git log --pretty=format:'%h %s'"
+    println(description)
+    final def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'log', "--pretty=format:'%h %s'"
+        standardOutput = stdout
+    }
+
+    return stdout.toString().trim();
+}
+
+def commitHash() {
+    description = "git log -n 1 --format='%h'"
+    println(description)
+    final def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'log', '-n', '1', "--format='%h'"
+        standardOutput = stdout
+    }
+    println("Git Hash" + stdout.toString())
+    return stdout.toString().trim().replaceAll('\'', '')
+}
+
+def commitCount() {
+    final def stdout = new ByteArrayOutputStream()
+    description = "git rev-list --full-history --all"
+    println(description)
+    exec {
+        commandLine 'git', 'rev-list', '--full-history', '--all'
+        standardOutput = stdout
+    }
+    final String output = stdout.toString();
+    final List<String> commits = output.split("\n");
+    println("Version Code: " + commits.size())
+    return commits.size();
+}
+
+def simpleReleaseVersionName() {
+    description = "Creating release version name. Format: major.minor.build"
+    println(description)
+
+    final def buildNumber = buildNumberByCI()
+    def releaseName = branchName()
+    // remove 'origin' in from branch name
+    if (releaseName != null && releaseName.contains("origin/"))
+        releaseName = releaseName.replace("origin/", "");
+
+    if (releaseName.contains("release"))
+        releaseName = releaseName.replace("release/", "");
+    else
+        releaseName = versionName
+
+    if (buildNumber != null)
+        releaseName += "." + buildNumber
+    else
+        releaseName += "." + 0
+
+    println("Version Name: " + releaseName)
+    return releaseName
+}
+
+def canonicalReleaseVersionName() {
+    description = "Creating release version name. Format: branch/major.minor.build-commithash"
+    println(description)
+    final def buildNumber = buildNumberByCI()
+    def releaseName = branchName()
+
+    // remove 'origin' in from branch name
+    if (releaseName != null && releaseName.contains("origin/"))
+        releaseName = releaseName.replace("origin/", "");
+
+    if (!releaseName.contains("release"))
+        releaseName += "/" + versionName
+
+    if (buildNumber != null) {
+        releaseName += "." + buildNumber + "-"
+    } else {
+        releaseName += ".0-"
+    }
+
+    releaseName += commitHash()
+    println('Version Name: ' + releaseName)
+    return releaseName
+}
+
+def buildNumberByCI() {
+    description = 'Getting build number from Jenkins or Travis.'
+    println(description)
+    final def env = System.getenv()
+    if (env.BITRISE_BUILD_NUMBER != null)
+        return Integer.parseInt(env.BITRISE_BUILD_NUMBER)
+    if (env.BUILD_NUMBER != null)
+        return Integer.parseInt(env.BUILD_NUMBER)
+    if (env.TRAVIS_BUILD_NUMBER != null)
+        return Integer.parseInt(env.TRAVIS_BUILD_NUMBER)
+    return 0;
+}
+
+def branchName() {
+    description = 'Getting branch name from Jenkins or Travis or from git directly.'
+    println(description)
+    def branchName = branchNameByCI()
+    if (branchName == null)
+        branchName = branchNameByGit()
+    return branchName;
+}
+
+def branchNameByCI() {
+    description = 'Getting build number from Jenkins or Travis.'
+    println(description)
+    final def env = System.getenv()
+    if (env.BITRISE_GIT_BRANCH != null)
+        return env.BITRISE_GIT_BRANCH;
+    if (env.GIT_BRANCH != null)
+        return env.GIT_BRANCH
+    if (env.TRAVIS_BRANCH != null)
+        return env.TRAVIS_BRANCH
+    return null
+}
+
+def branchNameByGit() {
+    final def stdout = new ByteArrayOutputStream()
+    description = 'git rev-parse --abbrev-ref HEAD'
+    println(description)
+    exec {
+        commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
+        standardOutput = stdout
+    }
+    final String output = stdout.toString().trim();
+    println('Branch Name: ' + output)
+    return output;
+}
+
+// endregion
+
+// region misc
+
+def escape(Object value) {
+    return "\"$value\""
+}
+
+// endregion
+
+// region copy readme
+
+task copyReadme(type: Copy) {
+    from '../README.md'
+    into 'src/main/assets'
+}
+
+tasks.whenTaskAdded { final task ->
+    if (task.name.startsWith('assemble')) {
+        tasks.copyReadme.execute()
+        generateChangelog()
+    }
+}
+
+// endregion
+
+// region javadoc
+
+apply from: 'https://gist.githubusercontent.com/kibotu/994c9cc65fe623b76b76fedfac74b34b/raw/65ee52482ba65050e015f4b00d8d2fc9172a10e8/javadoc.gradle'
+
+// endregion
+
+// region multidex
+
+afterEvaluate {
+    tasks.matching {
+        it.name.startsWith('dex')
+    }.each { final dx ->
+        if (dx.additionalParameters == null) {
+            dx.additionalParameters = ['--multi-dex']
+        } else {
+            dx.additionalParameters += '--multi-dex'
+        }
+    }
+}
+repositories {
+    mavenCentral()
+    maven { url 'https://maven.fabric.io/public' }
+}
+
+// endregion

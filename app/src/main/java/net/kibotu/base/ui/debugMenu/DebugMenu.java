@@ -38,7 +38,6 @@ import static com.common.android.utils.extensions.ResourceExtensions.getString;
 import static com.common.android.utils.extensions.StringExtensions.capitalize;
 import static com.common.android.utils.misc.GsonProvider.getGsonPrettyPrinting;
 import static net.kibotu.android.deviceinfo.library.ViewHelper.formatBytes;
-import static net.kibotu.base.MainApplication.createDeviceBuild;
 import static net.kibotu.base.storage.LocalUser.switchToDefault;
 import static net.kibotu.base.storage.LocalUser.switchToKorean;
 import static net.kibotu.base.ui.markdown.MarkdownFragment.MARKDOWN_FILENAME;
@@ -161,8 +160,7 @@ public class DebugMenu {
                     Logger.v(TAG, "Current Fragment " + FragmentExtensions.currentFragment());
                     break;
                 case R.string.debug_build_info:
-                    Map<String, String> info = MainApplication.createAppBuildInfo();
-                    info.putAll(createDeviceBuild(getContext()));
+                    Map<String, String> info = MainApplication.Companion.createInfo(getContext());
                     replaceToBackStackByFading(new RawOutputFragment().setArgument(new Bundler().putString(RawOutputFragment.RAW_OUTPUT_TEXT, getGsonPrettyPrinting().toJson(info)).get()));
                     break;
                 case R.string.debug_current_threads:

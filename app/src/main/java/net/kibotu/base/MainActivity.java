@@ -234,8 +234,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static void startWifiScanning() {
         final Activity activity = getActivity();
-        if (activity instanceof MainActivity)
-            MainActivityPermissionsDispatcher.scanWifiWithCheck((MainActivity) activity);
+        //if (activity instanceof MainActivity)
+            //MainActivityPermissionsDispatcher.scanWifiWithCheck((MainActivity) activity);
     }
 
     // endregion
@@ -245,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        MainActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+       // MainActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
     }
 
     @Override

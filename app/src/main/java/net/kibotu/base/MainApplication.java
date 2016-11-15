@@ -7,7 +7,6 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
-import android.webkit.WebView;
 
 import com.common.android.utils.ContextHelper;
 import com.common.android.utils.extensions.FragmentExtensions;
@@ -22,6 +21,7 @@ import net.danlew.android.joda.JodaTimeAndroid;
 import net.kibotu.android.bloodhound.BloodHound;
 import net.kibotu.android.deviceinfo.library.Device;
 import net.kibotu.base.misc.ConnectivityChangeListenerRx;
+import net.kibotu.base.misc.DefaultUserAgent;
 import net.kibotu.base.storage.LocalUser;
 
 import java.util.Arrays;
@@ -59,7 +59,6 @@ import static android.os.Build.VERSION.INCREMENTAL;
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static android.os.Build.VERSION_CODES.N;
-import static com.common.android.utils.ContextHelper.getContext;
 import static com.common.android.utils.extensions.JUnitExtensions.isJUnitTest;
 import static net.kibotu.base.BuildConfig.BRANCH;
 import static net.kibotu.base.BuildConfig.BUILD_DATE;
@@ -152,19 +151,20 @@ public class MainApplication extends MultiDexApplication {
 
     private void initFabric() {
         Fabric.with(this, new Crashlytics());
-        Map<String, String> info = createAppBuildInfo();
-        info.putAll(createDeviceBuild());
-        for (Map.Entry<String, String> entry : info.entrySet())
+        for (Map.Entry<String, String> entry : createInfo().entrySet())
             Crashlytics.setString(entry.getKey(), entry.getValue());
     }
 
-    private static void logBuildConfig() {
-
-        Map<String, String> info = createAppBuildInfo();
-        info.putAll(createDeviceBuild());
-        for (Map.Entry<String, String> entry : info.entrySet()) {
+    private void logBuildConfig() {
+        for (Map.Entry<String, String> entry : createInfo().entrySet()) {
             Logger.i(TAG, entry.getKey() + " : " + entry.getValue());
         }
+    }
+
+    public Map<String, String> createInfo() {
+        Map<String, String> info = createAppBuildInfo();
+        info.putAll(createDeviceBuild(this));
+        return info;
     }
 
     public static Map<String, String> createAppBuildInfo() {
@@ -186,7 +186,7 @@ public class MainApplication extends MultiDexApplication {
         return info;
     }
 
-    public static Map<String, String> createDeviceBuild() {
+    public static Map<String, String> createDeviceBuild(Context context) {
         Map<String, String> info = new LinkedHashMap<>();
         // http://developer.android.com/reference/android/os/Build.html
 
@@ -221,18 +221,10 @@ public class MainApplication extends MultiDexApplication {
         // http://developer.android.com/reference/android/os/Build.VERSION.html
         info.put("Codename", CODENAME);
         info.put("Incremental", INCREMENTAL);
-        info.put("User Agent", userAgentAsString());
+        info.put("User Agent", DefaultUserAgent.getDefaultUserAgent(context));
+        info.put("HTTP Agent", System.getProperty("http.agent"));
 
         return info;
-    }
-
-    public static String userAgentAsString() {
-        try {
-            return new WebView(getContext()).getSettings().getUserAgentString();
-        } catch (Exception e) {
-            Logger.e(TAG, "[userAgentAsString] " + e.getMessage());
-        }
-        return "";
     }
 
     @SuppressLint("NewApi")

@@ -162,7 +162,7 @@ public class DebugMenu {
                     break;
                 case R.string.debug_build_info:
                     Map<String, String> info = MainApplication.createAppBuildInfo();
-                    info.putAll(createDeviceBuild());
+                    info.putAll(createDeviceBuild(getContext()));
                     replaceToBackStackByFading(new RawOutputFragment().setArgument(new Bundler().putString(RawOutputFragment.RAW_OUTPUT_TEXT, getGsonPrettyPrinting().toJson(info)).get()));
                     break;
                 case R.string.debug_current_threads:

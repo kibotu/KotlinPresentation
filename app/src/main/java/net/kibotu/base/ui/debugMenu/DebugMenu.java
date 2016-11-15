@@ -40,7 +40,6 @@ import static com.common.android.utils.misc.GsonProvider.getGsonPrettyPrinting;
 import static net.kibotu.android.deviceinfo.library.ViewHelper.formatBytes;
 import static net.kibotu.base.storage.LocalUser.switchToDefault;
 import static net.kibotu.base.storage.LocalUser.switchToKorean;
-import static net.kibotu.base.ui.markdown.MarkdownFragment.MARKDOWN_FILENAME;
 
 /**
  * Created by <a href="https://about.me/janrabe">Jan Rabe</a>.
@@ -161,7 +160,7 @@ public class DebugMenu {
                     break;
                 case R.string.debug_build_info:
                     Map<String, String> info = MainApplication.Companion.createInfo(getContext());
-                    replaceToBackStackByFading(new RawOutputFragment().setArgument(new Bundler().putString(RawOutputFragment.RAW_OUTPUT_TEXT, getGsonPrettyPrinting().toJson(info)).get()));
+                    replaceToBackStackByFading(new RawOutputFragment().setArgument(new Bundler().putString(RawOutputFragment.Companion.getRAW_OUTPUT_TEXT(), getGsonPrettyPrinting().toJson(info)).get()));
                     break;
                 case R.string.debug_current_threads:
                     for (Map.Entry<Thread, StackTraceElement[]> entry : Thread.getAllStackTraces().entrySet()) {
@@ -180,11 +179,11 @@ public class DebugMenu {
 
                 // screens
                 case R.string.screen_markdown_readme:
-                    replaceToBackStackByFading(new MarkdownFragment().setArgument(new Bundler().putString(MARKDOWN_FILENAME, "README.md").get()));
+                    replaceToBackStackByFading(new MarkdownFragment().setArgument(new Bundler().putString(MarkdownFragment.Companion.getMARKDOWN_FILENAME(), "README.md").get()));
                     break;
 
                 case R.string.screen_markdown_changelog:
-                    replaceToBackStackByFading(new MarkdownFragment().setArgument(new Bundler().putString(MARKDOWN_FILENAME, "CHANGELOG.md").get()));
+                    replaceToBackStackByFading(new MarkdownFragment().setArgument(new Bundler().putString(MarkdownFragment.Companion.getMARKDOWN_FILENAME(), "CHANGELOG.md").get()));
                     break;
 
                 case R.string.screen_splash:

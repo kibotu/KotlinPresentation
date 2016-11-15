@@ -102,10 +102,10 @@ class MainApplication : MultiDexApplication() {
     private fun initConnectivityChangeListener() {
         ConnectionBuddy.getInstance().init(ConnectionBuddyConfiguration.Builder(this).build())
         ConnectivityChangeListenerRx.with(this)
-//        ConnectivityChangeListenerRx.getObservable()
-//                .subscribe({ connectivityEvent
-//                    -> Logger.v(TAG, "[connectivityEvent] " + connectivityEvent)
-//                }, Action1<Throwable> { it.printStackTrace() })
+        ConnectivityChangeListenerRx.getObservable()
+                .subscribe({ connectivityEvent ->
+                    Logger.v(TAG, "[connectivityEvent] " + connectivityEvent)
+                }, { it.printStackTrace() })
     }
 
     private fun initFabric() {

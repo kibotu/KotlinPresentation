@@ -23,7 +23,6 @@ import org.robolectric.annotation.Config
 class BundleTests {
 
     @Before
-    // @Config(sdk = Build.VERSION_CODES.M)
     @Throws(Exception::class)
     fun setUp() {
         val activity = Robolectric.buildActivity(MainActivity::class.java).create().start().get()

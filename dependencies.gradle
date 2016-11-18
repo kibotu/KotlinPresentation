@@ -1,0 +1,26 @@
+
+ext {
+
+    androidPluginVer = "2.2.2"
+    retrolambdaVer = "3.2.5"
+    projectlombokVer = "0.2.3.a2"
+    androidAptVer = "1.8"
+    hockeyappPluginVer = "3.4.5"
+    androidRocketLauncherVer = "0.2.3"
+    dexcountGradlePluginVer = "0.6.1"
+    androidMavenGradlePluginVer = "1.5"
+    kotlinVersion = "1.0.5"
+    fabricVer = "1.+"
+
+    androidMavenGradlePluginVer = "1.5"
+    gradleBintrayPluginVer = "1.7.2"
+
+    compileSdkVer = 25
+    buildToolsVer = "25.0.0"
+
+    minSdkVer = 15
+    targetSdkVer = 25
+
+
+    supportLibVer = "25.0.0"
+}

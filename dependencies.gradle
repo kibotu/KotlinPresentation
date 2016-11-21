@@ -10,10 +10,9 @@ ext {
     dexcountGradlePluginVer = "0.6.1"
     androidMavenGradlePluginVer = "1.5"
     kotlinVersion = "1.0.5"
-    fabricVer = "1.+"
+    fabricPluginVer = "1.+"
 
     androidMavenGradlePluginVer = "1.5"
-    gradleBintrayPluginVer = "1.7.2"
 
     compileSdkVer = 25
     buildToolsVer = "25.0.0"
@@ -21,6 +20,39 @@ ext {
     minSdkVer = 15
     targetSdkVer = 25
 
+    multiDexVer = "1.0.1"
+    supportLibVer = "25.0.1"
+    playServicesVer = "9.8.0"
+    butterknifeVer = "8.4.0"
 
-    supportLibVer = "25.0.0"
+    commonAndroidUtils = "0.7.2"
+    kibotuAndroidDeviceinfo = "1.2.1"
+    recyclerViewPresenter = "1.4.1"
+    googlePlayForceUpdate = "1.0.8"
+    timeBomb = "1.1.0"
+    bloodHound = "1.0.5"
+    shareIntentBuilderVer = "v0.0.3"
+
+    connectionbuddy = "1.2.0@aar"
+    calligraphyVer = "2.2.0"
+    permissionsdispatcherVer = "2.1.3"
+    parcelerVer = "1.1.2"
+    jodaTimeVer = "2.9.5"
+    smartlocationVer = "3.2.7"
+
+    materialDrawerVer = "5.2.6@aar"
+    markdownviewVer = "1.0.0"
+    rxmarkdownVer = "0.0.5"
+
+    facebookStethoVer = "1.3.1"
+    crashlyticsVer = "2.6.5@aar"
+    processPhoenixVer = "1.1.0"
+
+    //test
+    junitVer = "4.12"
+    roboelectricVer = "3.2-SNAPSHOT"
+
+    khronosOpenglApi = "gl1.1-android-2.1_r1"
+    espressoVer = "2.2.2"
+
 }

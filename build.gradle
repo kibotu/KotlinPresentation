@@ -17,8 +17,8 @@ buildscript {
         classpath "com.cesarferreira:android-rocket-launcher:$androidRocketLauncherVer"
         classpath "com.getkeepsafe.dexcount:dexcount-gradle-plugin:$dexcountGradlePluginVer"
         classpath "com.github.dcendents:android-maven-gradle-plugin:$androidMavenGradlePluginVer"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlinVersion"
+        classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "io.fabric.tools:gradle:$fabricPluginVer"
     }
 

@@ -181,7 +181,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     // kotlin
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     // multidex
     compile "com.android.support:multidex:$multiDexVer"

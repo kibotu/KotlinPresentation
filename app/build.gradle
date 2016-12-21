@@ -180,96 +180,51 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-
-    // kotlin
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-
-    // multidex
-    compile "com.android.support:multidex:$multiDexVer"
-
-    // appcompat
-    compile "com.android.support:appcompat-v7:$supportLibVer"
-    compile "com.android.support:cardview-v7:$supportLibVer"// common ui
-    compile "com.github.kibotu:common.android.utils:$commonAndroidUtils"
-
-    // device infos
-    compile "com.github.kibotu:net.kibotu.android.deviceinfo:$kibotuAndroidDeviceinfo"
-
-    // presenter
-    compile("com.github.kibotu:RecyclerViewPresenter:$recyclerViewPresenter") {
-        exclude group: 'com.android.support'
-    }
-
-    // force store
-    compile "com.github.kibotu:GooglePlayForceUpdate:$googlePlayForceUpdate"
-
-    // time bomb
-    compile "com.github.kibotu:TimeBomb:$timeBomb"
-
-    // ga
-    compile("com.github.kibotu:BloodHound:$bloodHound") {
+    compile libs.kotlin
+    compile libs.multidex
+    compile libs.appcombat
+    compile libs.cardview
+    compile libs.commonUtils
+    compile libs.deviceInfo
+    compile libs.recyclerViewPresenter
+    compile libs.googlePlayForceUpdate
+    compile libs.timeBomb
+    compile(libs.bloodHound) {
         exclude group: 'com.google.android.gms'
     }
-
-    // network connection handling
-    compile "com.zplesac:connectionbuddy:$connectionbuddy"
-
-    // fonts
-    compile("uk.co.chrisjenx:calligraphy:$calligraphyVer")
-
-    // permissions
-    compile "com.github.hotchemi:permissionsdispatcher:$permissionsdispatcherVer"
-    kapt "com.github.hotchemi:permissionsdispatcher-processor:$permissionsdispatcherVer"
-
-    // parcel
-    compile "org.parceler:parceler-api:$parcelerVer"
-    kapt "org.parceler:parceler:$parcelerVer"
-
-    // time
-    compile "net.danlew:android.joda:$jodaTimeVer"
-
-    // share
-    compile "com.github.kibotu:ShareIntentBuilder:$shareIntentBuilderVer"
-
-    // location for wifi scanning D:
-    compile "io.nlopez.smartlocation:library:$smartlocationVer"
-
-    // unit tests
-    testCompile "junit:junit:$junitVer"
-    testCompile "org.robolectric:robolectric:$roboelectricVer"
-    testCompile "org.robolectric:shadows-multidex:$roboelectricVer"
-    testCompile "org.robolectric:robolectric-resources:$roboelectricVer"
-    testCompile "org.robolectric:robolectric-utils:$roboelectricVer"
-    testCompile "org.robolectric:robolectric-annotations:$roboelectricVer"
-    testCompile "org.robolectric:robolectric-resources:$roboelectricVer"
-    testCompile "org.robolectric:shadows-core:$roboelectricVer"
-    testCompile "org.khronos:opengl-api:$khronosOpenglApi"
-
-    androidTestCompile("com.android.support.test.espresso:espresso-core:$espressoVer", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-
-    // debug menu
-    compile("com.mikepenz:materialdrawer:$materialDrawerVer") {
+    compile libs.connectionBuddy
+    compile libs.calligraphy
+    compile libs.permissionDispatcher
+    kapt libs.permissionDispatcherProcessor
+    compile libs.parceler
+    kapt libs.parcelerProcessor
+    compile libs.joda
+    compile libs.shareIntentBuilder
+    compile libs.smartLocation
+    compile(libs.materialdrawer) {
         transitive = true
     }
-
-    // markdown
-    compile "com.mukesh:markdownview:$markdownviewVer"
-    compile "com.yydcdut:rxmarkdown:$rxmarkdownVer"
-
-    // stetho
-    compile "com.facebook.stetho:stetho:$facebookStethoVer"
-    compile "com.facebook.stetho:stetho-okhttp3:$facebookStethoVer"
-    compile "com.facebook.stetho:stetho-js-rhino:$facebookStethoVer"
-
-    // crashlytics
-    compile("com.crashlytics.sdk.android:crashlytics:$crashlyticsVer") {
+    compile libs.markdownview
+    compile libs.rxmarkdown
+    compile libs.stetho
+    compile libs.stethoOkHttp3
+    compile libs.stethoJsRhino
+    compile libs.processPhoenix
+    compile(libs.crashlytics) {
         transitive = true;
     }
-
-    // restarting app
-    compile "com.jakewharton:process-phoenix:$processPhoenixVer"
+    testCompile testLibs.junit
+    testCompile testLibs.robolectric
+    testCompile testLibs.robolectricShadowsMultidex
+    testCompile testLibs.robolectricResources
+    testCompile testLibs.robolectricUtils
+    testCompile testLibs.robolectricAnnotations
+    testCompile testLibs.robolectricShadowsCore
+    testCompile testLibs.khronos
+    androidTestCompile(testLibs.espresso, {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
 // endregion
@@ -277,19 +232,7 @@ dependencies {
 // region override support library version
 
 configurations.all {
-    resolutionStrategy.force "com.android.support:support-annotations:$supportLibVer"
-    resolutionStrategy.force "com.android.support:support-v4:$supportLibVer"
-    resolutionStrategy.force "com.android.support:support-v13:$supportLibVer"
-    resolutionStrategy.force "com.android.support:appcompat-v7:$supportLibVer"
-    resolutionStrategy.force "com.android.support:design:$supportLibVer"
-    resolutionStrategy.force "com.android.support:recyclerview-v7:$supportLibVer"
-    resolutionStrategy.force "com.android.support:cardview-v7:$supportLibVer"
-
-    resolutionStrategy.force "com.jakewharton:butterknife:$butterknifeVer"
-    resolutionStrategy.force "com.jakewharton:butterknife-compiler:$butterknifeVer"
-    ""
-    resolutionStrategy.force "com.google.android.gms:play-services-location:$playServicesVer"
-    resolutionStrategy.force "com.google.android.gms:play-services-analytics:$playServicesVer"
+     libs.each { resolutionStrategy.force it.value }
 }
 
 // endregion

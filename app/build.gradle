@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'android-apt'
 apply plugin: 'android-rocket-launcher'
@@ -218,11 +219,11 @@ dependencies {
 
     // permissions
     compile "com.github.hotchemi:permissionsdispatcher:$permissionsdispatcherVer"
-    apt "com.github.hotchemi:permissionsdispatcher-processor:$permissionsdispatcherVer"
+    kapt "com.github.hotchemi:permissionsdispatcher-processor:$permissionsdispatcherVer"
 
     // parcel
     compile "org.parceler:parceler-api:$parcelerVer"
-    apt "org.parceler:parceler:$parcelerVer"
+    kapt "org.parceler:parceler:$parcelerVer"
 
     // time
     compile "net.danlew:android.joda:$jodaTimeVer"

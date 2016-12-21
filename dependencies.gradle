@@ -2,7 +2,7 @@
 ext {
 
     androidPluginVer = '2.2.2'
-    retrolambdaVer = '3.2.5'
+    retrolambdaVer = '3.4.0'
     projectlombokVer = '0.2.3.a2'
     androidAptVer = '1.8'
     hockeyappPluginVer = '3.4.5'
@@ -35,7 +35,7 @@ ext {
 
     connectionbuddy = '1.2.0@aar'
     calligraphyVer = '2.2.0'
-    permissionsdispatcherVer = '2.1.3'
+    permissionsdispatcherVer = '2.3.0'
     parcelerVer = '1.1.2'
     jodaTimeVer = '2.9.5'
     smartlocationVer = '3.2.7'

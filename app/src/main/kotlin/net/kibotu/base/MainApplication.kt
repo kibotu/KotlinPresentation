@@ -102,7 +102,7 @@ class MainApplication : MultiDexApplication() {
     private fun initConnectivityChangeListener() {
         ConnectionBuddy.getInstance().init(ConnectionBuddyConfiguration.Builder(this).build())
         ConnectivityChangeListenerRx.with(this)
-        ConnectivityChangeListenerRx.getObservable()
+        ConnectivityChangeListenerRx.observable
                 .subscribe({ connectivityEvent ->
                     Logger.v(TAG, "[connectivityEvent] " + connectivityEvent)
                 }, { it.printStackTrace() })
@@ -123,7 +123,7 @@ class MainApplication : MultiDexApplication() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         Logger.v(TAG, "[onConfigurationChanged] " + newConfig)
-        LocalUser.setDefaultLocale(getLocaleFrom(newConfig))
+        LocalUser.defaultLocale = getLocaleFrom(newConfig)
     }
 
     override fun onTerminate() {

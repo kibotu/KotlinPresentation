@@ -7,53 +7,48 @@ import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.view.*
 import com.common.android.utils.ContextHelper.getFragmentActivity
-import com.common.android.utils.interfaces.LayoutProvider
 import com.common.android.utils.interfaces.LogTag
 import com.common.android.utils.misc.UIDGenerator
 
 /**
- * Created by jan.rabe on 26/08/16.
- * <img src="https://raw.githubusercontent.com/Aracem/android-lifecycle/master/complete_android_fragment_lifecycle.png"></img>
+ * Created by [Jan Rabe](https://about.me/janrabe).
+ *
+ * ![Lifecycle](https://raw.githubusercontent.com/Aracem/android-lifecycle/master/complete_android_fragment_lifecycle.png)
  */
-
-abstract class BaseDialogFragment : DialogFragment(), LayoutProvider, LogTag {
+abstract class BaseDialogFragment : DialogFragment(), LogTag {
 
     protected val uid = UIDGenerator.newUID()
 
+    protected abstract val layout: Int
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = super.onCreateDialog(savedInstanceState)
-        val window = dialog.window
-        addFlags(window)
-        return dialog
+        return super.onCreateDialog(savedInstanceState).apply {
+            addFlags(dialog.window)
+        }
     }
 
     private fun addFlags(window: Window?) {
         if (window == null)
             return
-
         if (SDK_INT >= LOLLIPOP)
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-
         if (SDK_INT >= KITKAT)
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.requestFeature(Window.FEATURE_NO_TITLE)
         window.setBackgroundDrawableResource(android.R.color.transparent)
-
         if (SDK_INT >= LOLLIPOP_MR1) {
             window.setClipToOutline(false)
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater!!.inflate(layout, container, false)
-        return view
+        return inflater!!.inflate(layout, container, false)
     }
 
     fun show(): BaseDialogFragment {
-        if (getFragmentActivity()!!.supportFragmentManager.findFragmentByTag(javaClass.canonicalName) != null)
+        if (getFragmentActivity()?.supportFragmentManager?.findFragmentByTag(javaClass.canonicalName) != null)
             return this
-
-        show(getFragmentActivity()!!.supportFragmentManager, javaClass.canonicalName)
+        show(getFragmentActivity()?.supportFragmentManager, javaClass.canonicalName)
         return this
     }
 

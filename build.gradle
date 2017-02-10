@@ -1,19 +1,18 @@
 buildscript {
-    ext.kotlin_version = '1.0.5-3'
-    apply from: 'dependencies.gradle'
+
+    apply from: "${project.rootDir}/GradleExtensions/dependencies.gradle"
+    apply from: "${project.rootDir}/GradleExtensions/utils.gradle"
 
     repositories {
         jcenter()
         maven { url 'https://jitpack.io' }
         maven { url 'https://maven.fabric.io/public' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev/' }
     }
 
     dependencies {
         classpath plugin.gradleBuildTools
-        classpath plugin.gradleRetroLambda
-        classpath plugin.lombok
-        classpath plugin.androidApt
         classpath plugin.hockeyApp
         classpath plugin.rocketLauncher
         classpath plugin.dexcountGradle
@@ -21,11 +20,7 @@ buildscript {
         classpath plugin.kotlinAndroidExtensions
         classpath plugin.kotlinGradle
         classpath plugin.fabricTools
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
-
-    // Exclude the version that the android plugin depends on.
-    configurations.classpath.exclude group: 'com.android.tools.external.lombok'
 }
 
 allprojects {
@@ -34,11 +29,18 @@ allprojects {
         maven { url 'https://jitpack.io' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
         maven { url 'https://maven.fabric.io/public' }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev/' }
+    }
+
+    tasks.withType(JavaCompile) {
+        configure(options) {
+            incremental = true
+        }
     }
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.1'
+    gradleVersion = '3.3'
 }
 
 task clean(type: Delete) {

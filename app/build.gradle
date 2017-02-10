@@ -2,8 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'me.tatarka.retrolambda'
-apply plugin: 'android-apt'
 apply plugin: 'android-rocket-launcher'
 apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'com.github.dcendents.android-maven'
@@ -105,20 +103,22 @@ android {
 
     // region compile options
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+//    compileOptions {
+//        sourceCompatibility JavaVersion.VERSION_1_8
+//        targetCompatibility JavaVersion.VERSION_1_8
+//    }
 
     // endregion
 
     // region lint options
 
     lintOptions {
-        checkReleaseBuilds false
-        abortOnError false
-        ignoreWarnings true
         disable 'InvalidPackage'
+        abortOnError false        // true by default
+        checkAllWarnings false
+        checkReleaseBuilds false
+        ignoreWarnings true       // false by default
+        quiet true                // false by default
     }
 
     // endregion
@@ -128,6 +128,11 @@ android {
     testOptions {
         unitTests.all {
             jvmArgs '-noverify'
+            testLogging {
+                events "passed", "skipped", "failed", "standardOut", "standardError"
+                outputs.upToDateWhen { false }
+                showStandardStreams = true
+            }
         }
         unitTests.returnDefaultValues = true
     }
@@ -153,7 +158,7 @@ android {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/ASL2.0'
-        exclude 'META-INF/services/javax.annotation.processing.Processor'  // butterknife
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/license.txt'
@@ -167,10 +172,7 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
-    }
-
-    kapt {
-        generateStubs = true
+        test.java.srcDirs += 'src/test/kotlin'
     }
 
     // endregion
@@ -213,6 +215,7 @@ dependencies {
     compile(libs.crashlytics) {
         transitive = true;
     }
+
     testCompile testLibs.junit
     testCompile testLibs.robolectric
     testCompile testLibs.robolectricShadowsMultidex
@@ -221,10 +224,8 @@ dependencies {
     testCompile testLibs.robolectricAnnotations
     testCompile testLibs.robolectricShadowsCore
     testCompile testLibs.khronos
-    androidTestCompile(testLibs.espresso, {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    androidTestCompile androidTestLibs.espressoCore
 }
 
 // endregion
@@ -232,17 +233,28 @@ dependencies {
 // region override support library version
 
 configurations.all {
-     libs.each { resolutionStrategy.force it.value }
-}
+    resolutionStrategy.force libs.supportAnnotations
+    resolutionStrategy.force libs.supportV4
+    resolutionStrategy.force libs.supportV13
+    resolutionStrategy.force libs.appcombat
+    resolutionStrategy.force libs.recyclerview
+    resolutionStrategy.force libs.cardview
+    resolutionStrategy.force libs.design
 
-// endregion
+    resolutionStrategy.force libs.playServicesMaps
+    resolutionStrategy.force libs.playServicesPlaces
+    resolutionStrategy.force libs.playServicesNearby
+    resolutionStrategy.force libs.playServicesLocation
+    resolutionStrategy.force libs.playServicesAnalytics
+    resolutionStrategy.force libs.playServicesGcm
+    resolutionStrategy.force libs.playServicesAds
 
-// region retrolambda
+    resolutionStrategy.force libs.butterknife
+    resolutionStrategy.force libs.butterknifeCompiler
+    resolutionStrategy.force libs.playServicesLocation
+    resolutionStrategy.force libs.playServicesAnalytics
 
-retrolambda {
-    jvmArgs '-noverify'
-    defaultMethods false
-    incremental true
+    resolutionStrategy.force libs.guava
 }
 
 // endregion

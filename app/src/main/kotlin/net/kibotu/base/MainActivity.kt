@@ -245,7 +245,7 @@ class MainActivity : AppCompatActivity() {
         fun startWifiScanning() {
             val activity = getActivity()
             if (activity is MainActivity)
-                MainActivityPermissionsDispatcher.`scanWifi$app_debugWithCheck`(activity as MainActivity?)
+                MainActivityPermissionsDispatcher.scanWifiWithCheck(activity as MainActivity?)
         }
 
         // endregion

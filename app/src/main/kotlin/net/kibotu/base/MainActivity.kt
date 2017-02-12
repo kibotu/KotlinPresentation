@@ -45,7 +45,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
 @RuntimePermissions
 class MainActivity : AppCompatActivity() {
-    internal var debugMenu: DebugMenu? = null
+    var debugMenu: DebugMenu? = null
     private var newIntent: Intent? = null
     private var locationControl: SmartLocation.LocationControl? = null
 
@@ -176,7 +176,7 @@ class MainActivity : AppCompatActivity() {
     // region location permission
 
     @NeedsPermission(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)
-    internal fun scanWifi() {
+    fun scanWifi() {
         Logger.v(TAG, "[scanWifi]")
 
         startLocationTracking()
@@ -185,7 +185,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     @OnShowRationale(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)
-    internal fun showRationaleForLocation(request: PermissionRequest) {
+    fun showRationaleForLocation(request: PermissionRequest) {
         AlertDialog.Builder(this)
                 .setMessage(R.string.permission_location_rationale)
                 .setPositiveButton(R.string.button_allow) { dialog, button -> request.proceed() }
@@ -194,12 +194,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     @OnPermissionDenied(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)
-    internal fun showDeniedForLocation() {
+    fun showDeniedForLocation() {
         SnackbarExtensions.showWarningSnack(getString(R.string.permission_location_denied))
     }
 
     @OnNeverAskAgain(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)
-    internal fun showNeverAskForLocation() {
+    fun showNeverAskForLocation() {
         SnackbarExtensions.showWarningSnack(getString(R.string.permission_location_neverask))
     }
 
@@ -245,7 +245,7 @@ class MainActivity : AppCompatActivity() {
         fun startWifiScanning() {
             val activity = getActivity()
             if (activity is MainActivity)
-                MainActivityPermissionsDispatcher.scanWifiWithCheck(activity as MainActivity?)
+                MainActivityPermissionsDispatcher.`scanWifi$app_debugWithCheck`(activity as MainActivity?)
         }
 
         // endregion

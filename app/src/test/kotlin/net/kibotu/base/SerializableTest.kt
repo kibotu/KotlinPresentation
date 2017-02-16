@@ -1,7 +1,7 @@
 package net.kibotu.base
 
 import com.common.android.utils.misc.GsonProvider
-import com.exozet.creative.misc.toJsonPrettyPrinting
+import net.kibotu.base.misc.toJsonPrettyPrinting
 import org.junit.Assert
 import org.junit.Test
 

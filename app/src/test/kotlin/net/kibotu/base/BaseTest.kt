@@ -1,5 +1,6 @@
 package net.kibotu.base
 
+import android.app.Activity
 import com.common.android.utils.ContextHelper
 import com.common.android.utils.logging.Logger
 import com.common.android.utils.logging.SystemLogger
@@ -12,6 +13,7 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import kotlin.properties.Delegates
 
 /**
  * Created by [Jan Rabe](https://about.me/janrabe).
@@ -23,10 +25,12 @@ abstract class BaseTest {
 
     val TAG: String = javaClass.simpleName
 
+    var activity by Delegates.notNull<Activity>()
+
     @Before
     @Throws(Exception::class)
     open fun setUp() {
-        val activity = Robolectric.buildActivity(MainActivity::class.java).create().start().get()
+        activity = Robolectric.buildActivity(MainActivity::class.java).create().start().get()
         ContextHelper.with(RuntimeEnvironment.application)
         ContextHelper.setContext(activity)
         Logger.addLogger(SystemLogger())

@@ -9,10 +9,8 @@ import org.junit.Test
 
 class Test1 : BaseTest() {
 
-
     @Test
-    fun bla() {
-
+    fun jvmName() {
+        foo()
     }
-
 }

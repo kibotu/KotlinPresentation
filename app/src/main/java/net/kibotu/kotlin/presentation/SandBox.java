@@ -8,5 +8,8 @@ public class SandBox {
 
     void test() {
 
+        RandomUtility.foo();
+
+        MyCompanionObject.Jar.getCookie();
     }
 }

@@ -224,6 +224,7 @@ dependencies {
     testCompile testLibs.robolectricAnnotations
     testCompile testLibs.robolectricShadowsCore
     testCompile testLibs.khronos
+    testCompile testLibs.truth
 
     androidTestCompile androidTestLibs.espressoCore
 }

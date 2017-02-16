@@ -2,6 +2,8 @@
 
 Includes a few interesting kotlin features.
 
+@see https://hackernoon.com/5-small-things-you-probably-dont-know-about-kotlin-255261940de6#.up3t4j3kd
+
 ### Features
 
 ### How to install

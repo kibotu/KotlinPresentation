@@ -4,7 +4,7 @@
 
 @file:JvmName("KViewExtensions")
 
-package com.exozet.creative.misc
+package net.kibotu.base.misc
 
 import android.content.Context
 import android.content.res.Resources
@@ -158,7 +158,7 @@ fun View.load(url: String) {
                 .into(object : SimpleTarget<Bitmap>(width, height) {
                     override fun onResourceReady(resource: Bitmap, glideAnimation: GlideAnimation<in Bitmap>) {
                         val drawable = BitmapDrawable(resources, resource)
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        if (SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                             background = drawable
                         } else {
                             @Suppress("deprecation")

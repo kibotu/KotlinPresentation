@@ -1,38 +1,14 @@
-# Android Base [![Build Status](https://travis-ci.org/kibotu/AndroidBase.svg)](https://travis-ci.org/kibotu/AndroidBase)  [![API](https://img.shields.io/badge/API-15%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=15) [![Gradle Version](https://img.shields.io/badge/gradle-3.1-green.svg)](https://docs.gradle.org/current/release-notes) [![Retrolambda](https://img.shields.io/badge/java-8-green.svg)](https://github.com/evant/gradle-retrolambda) [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/kibotu/AndroidBase/master/LICENSE)
+# Kotlin Presentation Examples [![Build Status](https://travis-ci.org/kibotu/KotlinPresentation.svg)](https://travis-ci.org/kibotu/KotlinPresentation)  [![API](https://img.shields.io/badge/API-15%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=15) [![Gradle Version](https://img.shields.io/badge/gradle-3.3-green.svg)](https://docs.gradle.org/current/release-notes) [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/kibotu/AndroidBase/master/LICENSE)
 
-Base template for android applications.
+Includes a few interesting kotlin features.
 
 ### Features
-
-- default gradle tasks:
-- Standard Libraries
-- default folder structure
-- Application, Activity, Dialog defaults
-- kotlin support
-- permission entry points, e.g.: location permission
-- unlocking screen on app start during debug
-- logging build and device info on app start
-- easy shared preferences handling
-- connectivity change events
-- handling of passed intent data
-- timebombing old versions
-- update and force update checks against latest google play
-- debug menu for readme, changelog, app start, restart, build info, runtime language change
-- backstack handling for fragments and debug drawer menu
-- enabled multidex
-- handling configuration changes
-- roboelectric tests
-
 
 ### How to install
 	
 	gradle installDebug
 	    
 ### How to use
-
-1. Update ext.properties
-
-2. Inherit Fragments and FragmentDialogs
 
        
 ###License

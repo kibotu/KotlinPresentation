@@ -3,15 +3,14 @@ package net.kibotu.base
 import com.common.android.utils.ContextHelper
 import com.common.android.utils.logging.Logger
 import com.common.android.utils.logging.SystemLogger
-import com.common.android.utils.misc.Bundler
-import net.kibotu.base.ui.debugMenu.DebugMenu
-import org.junit.Assert
+import net.kibotu.base.MainActivity
+import net.kibotu.base.MainApplication
+import net.kibotu.base.storage.LocalUser
 import org.junit.Before
-import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment.application
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 
 /**
@@ -20,20 +19,23 @@ import org.robolectric.annotation.Config
 
 @Config(constants = BuildConfig::class, application = MainApplication::class, sdk = intArrayOf(23))
 @RunWith(RobolectricTestRunner::class)
-class BundleTests {
+abstract class BaseTest {
+
+    val TAG: String = javaClass.simpleName
 
     @Before
     @Throws(Exception::class)
-    fun setUp() {
+    open fun setUp() {
         val activity = Robolectric.buildActivity(MainActivity::class.java).create().start().get()
-        ContextHelper.with(application)
+        ContextHelper.with(RuntimeEnvironment.application)
         ContextHelper.setContext(activity)
         Logger.addLogger(SystemLogger())
-    }
 
-    @Test
-    fun debugBundle() {
-        Assert.assertTrue(DebugMenu.isDebug(DebugMenu.createDebugArguments()))
-        Assert.assertFalse(DebugMenu.isDebug(Bundler().get()))
+        Logger.setLogLevel(if (activity.resources.getBoolean(R.bool.enable_logging))
+            Logger.Level.VERBOSE
+        else
+            Logger.Level.SILENT)
+
+        LocalUser.clear()
     }
 }

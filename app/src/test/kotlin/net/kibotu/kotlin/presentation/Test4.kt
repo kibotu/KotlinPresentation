@@ -19,25 +19,21 @@ class Test4 : BaseTest() {
     fun withoutComposition() {
         val prices = listOf(21.8, 232.5, 231.3)
 
-//        prices.map(::taxed)
-//                .map(::discounted)
-//                .map(::rounded)
+        prices.map(this::taxed)
+                .map(this::discounted)
+                .map(this::rounded)
 
         val actual = prices.map { Test4::taxed }
                 .map { Test4::discounted }
-                .map { Test4::rounded }.toString()
+                .map { Test4::rounded }
     }
 
 
     @Test
     fun withComposition() {
 
-        // val taxedDiscountedRounded = compose(::taxed, ::discounted, ::rounded)
-
-        val taxedDiscountedRounded: (Double) -> Double = compose(
-                { taxed(it) },
-                { discounted(it) },
-                { rounded(it) })
+         val taxedDiscountedRounded = compose(this::taxed, this::discounted, this::rounded)
+o
 
         val acutal = prices.map(taxedDiscountedRounded)
 
